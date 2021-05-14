@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jk.qyq.dao.FoodDao">
+
+    <!--分页list-->
+<select id="getList" resultType="com.jk.qyq.entity.FoodEntity">
+  select * from t_food
+    <include refid="tc"></include>
+  limit #{start},#{rows}
+  </select>
+
+<!--分页total-->
+    <select id="getTotal" resultType="Integer">
+        select count(1) from t_food<include refid="tc"></include>
+    </select>
+
+
+    <sql id="tc">
+        <where>
+            <if test="ff.leixing !=null and ff.leixing !=-1">
+                and type=#{ff.leixing}
+            </if>
+           <if test="ff.mindate !=null and ff.mindate !=''">
+                and date &gt;=#{ff.mindate}
+            </if>
+            <if test="ff.maxdate !=null and ff.maxdate !=''">
+                and date &lt;=#{ff.maxdate}
+            </if>
+        </where>
+    </sql>
+    <!--//新增-->
+ <insert id="save">
+   insert into t_food(type,status,name,date,price)
+   values(#{type},#{status},#{name},#{date},#{price})
+  </insert>
+
+    <!--//回显-->
+    <select id="huixian" resultType="com.jk.qyq.entity.FoodEntity">
+        select * from t_food where id=#{0}
+    </select>
+<!--<update id="">
+update
+</update>-->
+<!--//删除-->
+<delete id="del">
+delete from t_food where id in
+<foreach collection="array" item="id" open="(" separator="," close=")">
+    #{id}
+</foreach>
+</delete>
+
+    <!--update-->
+    <update id="updateFood">
+        update  t_food set type=#{type},status=#{status},name=#{name},date=#{date},price=#{price}
+where id=#{id}
+    </update>
+</mapper>
